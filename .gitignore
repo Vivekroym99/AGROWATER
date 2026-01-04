@@ -27,6 +27,10 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
+
+# supabase
+.supabase/
 
 # vercel
 .vercel
@@ -34,3 +38,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# service account keys (NEVER commit these)
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!vercel.json
+
+# playwright
+/playwright-report/
+/test-results/
+
+# verification scripts
+verification_report.json
+verify_sentinel1.py
