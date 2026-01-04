@@ -2,6 +2,19 @@
 -- Created: 2024-01-04
 
 -- ============================================================================
+-- Utility Function (create if not exists)
+-- ============================================================================
+
+-- Function to auto-update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ============================================================================
 -- Push Subscriptions Table
 -- Stores browser push notification subscriptions
 -- ============================================================================
@@ -14,11 +27,7 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
   auth TEXT NOT NULL,
   user_agent TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  last_used_at TIMESTAMPTZ,
-
-  -- Index for faster lookups
-  CONSTRAINT push_subscriptions_user_id_fkey FOREIGN KEY (user_id)
-    REFERENCES auth.users(id) ON DELETE CASCADE
+  last_used_at TIMESTAMPTZ
 );
 
 -- Index for faster lookups by user
@@ -92,14 +101,17 @@ CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications(created
 -- Push Subscriptions RLS
 ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users can view own push subscriptions"
   ON push_subscriptions FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users can insert own push subscriptions"
   ON push_subscriptions FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users can delete own push subscriptions"
   ON push_subscriptions FOR DELETE
   USING (auth.uid() = user_id);
@@ -107,14 +119,17 @@ CREATE POLICY "Users can delete own push subscriptions"
 -- Notification Preferences RLS
 ALTER TABLE notification_preferences ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own notification preferences" ON notification_preferences;
 CREATE POLICY "Users can view own notification preferences"
   ON notification_preferences FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own notification preferences" ON notification_preferences;
 CREATE POLICY "Users can insert own notification preferences"
   ON notification_preferences FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own notification preferences" ON notification_preferences;
 CREATE POLICY "Users can update own notification preferences"
   ON notification_preferences FOR UPDATE
   USING (auth.uid() = user_id)
@@ -123,15 +138,18 @@ CREATE POLICY "Users can update own notification preferences"
 -- Notifications RLS
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own notifications" ON notifications;
 CREATE POLICY "Users can view own notifications"
   ON notifications FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own notifications" ON notifications;
 CREATE POLICY "Users can update own notifications"
   ON notifications FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role can insert notifications" ON notifications;
 -- Service role can insert notifications
 CREATE POLICY "Service role can insert notifications"
   ON notifications FOR INSERT
@@ -142,6 +160,7 @@ CREATE POLICY "Service role can insert notifications"
 -- ============================================================================
 
 -- Update timestamp trigger for notification_preferences
+DROP TRIGGER IF EXISTS update_notification_preferences_updated_at ON notification_preferences;
 CREATE TRIGGER update_notification_preferences_updated_at
   BEFORE UPDATE ON notification_preferences
   FOR EACH ROW
@@ -163,6 +182,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger to create default preferences when profile is created
+DROP TRIGGER IF EXISTS create_notification_preferences_on_profile ON profiles;
 CREATE TRIGGER create_notification_preferences_on_profile
   AFTER INSERT ON profiles
   FOR EACH ROW
