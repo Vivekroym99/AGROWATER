@@ -29,11 +29,24 @@ npm run build            # Production build
 npm run lint             # ESLint
 npm run type-check       # TypeScript check (npx tsc --noEmit)
 
+# Testing
+npm run test             # Run unit tests in watch mode (Vitest)
+npm run test:run         # Run unit tests once
+npm run test:coverage    # Run tests with coverage report
+npm run test:e2e         # Run E2E tests (Playwright)
+npm run test:e2e:ui      # Run E2E tests with UI
+npm run test:e2e:headed  # Run E2E tests in headed browser
+
 # Database
 npx supabase start                                              # Local Supabase
 npx supabase db push                                            # Push migrations
 npx supabase gen types typescript --local > src/types/database.ts  # Generate types
 ```
+
+### Testing Structure
+- **Unit tests**: Located in `src/**/*.{test,spec}.{ts,tsx}`, run with Vitest
+- **E2E tests**: Located in `e2e/` directory, run with Playwright
+- **Test setup**: `src/test/setup.ts` for Vitest configuration
 
 ## Architecture
 

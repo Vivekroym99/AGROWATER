@@ -5,6 +5,7 @@ import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/database';
 import { fetchMoistureForField, getDateRange } from '@/lib/earthengine';
 import type { GeoJSONPolygon } from '@/lib/earthengine';
+import { checkRateLimit } from '@/lib/security';
 
 // Interface for field data from select query
 interface FieldData {
@@ -23,6 +24,12 @@ interface FieldData {
  * Body: { field_id: string, days?: number }
  */
 export async function POST(request: NextRequest) {
+  // Strict rate limiting for expensive GEE operations
+  const rateLimitResult = await checkRateLimit(request, 'dataFetch');
+  if (!rateLimitResult.success && rateLimitResult.response) {
+    return rateLimitResult.response;
+  }
+
   const cookieStore = cookies();
 
   const supabase = createServerClient<Database>(
@@ -66,14 +73,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get field and verify ownership
-    const { data: fieldData, error: fieldError } = await supabase
-      .from('fields')
-      .select('id, user_id, boundary, name, alert_threshold, alerts_enabled')
-      .eq('id', field_id)
-      .eq('user_id', user.id)
-      .eq('is_active', true)
-      .single();
+    // Get field and verify ownership using RPC (returns boundary as GeoJSON)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: fieldData, error: fieldError } = await (supabase.rpc as any)(
+      'get_field_boundary',
+      {
+        p_field_id: field_id,
+        p_user_id: user.id,
+      }
+    ).single();
 
     if (fieldError || !fieldData) {
       return NextResponse.json(
@@ -82,10 +90,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Cast to typed field
+    // Field data from RPC already has boundary as GeoJSON
     const field = fieldData as unknown as FieldData;
-
-    // Parse boundary from database (stored as GeoJSON)
     const boundary = field.boundary as GeoJSONPolygon;
 
     if (!boundary || boundary.type !== 'Polygon') {

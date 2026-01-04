@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/database';
+import { checkRateLimit } from '@/lib/security';
 
 /**
  * POST /api/auth/change-password
@@ -11,6 +12,12 @@ import type { Database } from '@/types/database';
  * Body: { newPassword: string }
  */
 export async function POST(request: NextRequest) {
+  // Strict rate limiting for password changes
+  const rateLimitResult = await checkRateLimit(request, 'auth');
+  if (!rateLimitResult.success && rateLimitResult.response) {
+    return rateLimitResult.response;
+  }
+
   const cookieStore = cookies();
 
   const supabase = createServerClient<Database>(

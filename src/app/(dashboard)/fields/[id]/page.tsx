@@ -7,10 +7,14 @@ import { format, parseISO } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { useField, useFields } from '@/hooks/useFields';
 import { useMoistureHistory } from '@/hooks/useMoistureHistory';
-import { MoistureChart, formatChartData, TimeRangeSelector } from '@/components/charts';
+import { MoistureChart, formatChartData, TimeRangeSelector, MoistureAnalysis } from '@/components/charts';
 import type { TimeRange } from '@/components/charts';
+import type { MoistureReading } from '@/types/database';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
+import { ExportMenu } from '@/components/export';
+import { WeatherWidget } from '@/components/weather';
+import { IrrigationPlanner } from '@/components/irrigation';
 import { UI_TEXT, STATUS_COLORS, CROP_TYPES } from '@/lib/constants';
 import { cn } from '@/lib/utils/cn';
 
@@ -112,12 +116,12 @@ export default function FieldDetailPage() {
         <div>
           <Link
             href="/fields"
-            className="text-sm text-gray-500 hover:text-gray-700 mb-2 inline-block"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mb-2 inline-block"
           >
             &larr; {UI_TEXT.fields.back}
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">{field.name}</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{field.name}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             {cropLabel && <span>{cropLabel} &bull; </span>}
             {field.area_hectares?.toFixed(2)} {UI_TEXT.common.hectares}
             {field.last_reading_date && (
@@ -130,13 +134,19 @@ export default function FieldDetailPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <ExportMenu
+            fields={[field]}
+            readings={readings as MoistureReading[]}
+            currentField={field}
+            variant="compact"
+          />
           <Button
             variant="outline"
             size="sm"
             onClick={handleFetchMoisture}
             disabled={fetchingMoisture}
           >
-            {fetchingMoisture ? <Spinner size="sm" /> : 'Odśwież dane'}
+            {fetchingMoisture ? <Spinner size="sm" /> : 'Odswież dane'}
           </Button>
           <Button
             variant="danger"
@@ -148,38 +158,44 @@ export default function FieldDetailPage() {
         </div>
       </div>
 
-      {/* Current Status */}
-      <div className={cn('rounded-lg p-6', statusColors.bg)}>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">{UI_TEXT.moisture.current}</p>
-            <p className={cn('text-4xl font-bold mt-1', statusColors.text)}>
-              {field.current_moisture !== null
-                ? `${Math.round(field.current_moisture * 100)}%`
-                : UI_TEXT.moisture.noData}
-            </p>
+      {/* Current Status and Weather - Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Current Status */}
+        <div className={cn('rounded-lg p-6', statusColors.bg)}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{UI_TEXT.moisture.current}</p>
+              <p className={cn('text-4xl font-bold mt-1', statusColors.text)}>
+                {field.current_moisture !== null
+                  ? `${Math.round(field.current_moisture * 100)}%`
+                  : UI_TEXT.moisture.noData}
+              </p>
+            </div>
+            <div
+              className={cn(
+                'px-4 py-2 rounded-full text-sm font-semibold',
+                statusColors.bg,
+                statusColors.text,
+                'border-2',
+                statusColors.border
+              )}
+            >
+              {UI_TEXT.status[field.status]}
+            </div>
           </div>
-          <div
-            className={cn(
-              'px-4 py-2 rounded-full text-sm font-semibold',
-              statusColors.bg,
-              statusColors.text,
-              'border-2',
-              statusColors.border
-            )}
-          >
-            {UI_TEXT.status[field.status]}
-          </div>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
+            {UI_TEXT.status[`${field.status}Desc` as keyof typeof UI_TEXT.status]}
+          </p>
         </div>
-        <p className="text-sm text-gray-600 mt-3">
-          {UI_TEXT.status[`${field.status}Desc` as keyof typeof UI_TEXT.status]}
-        </p>
+
+        {/* Weather Widget */}
+        <WeatherWidget fieldId={fieldId} />
       </div>
 
       {/* Moisture Chart */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">{UI_TEXT.moisture.history}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{UI_TEXT.moisture.history}</h2>
           <TimeRangeSelector
             value={timeRange}
             onChange={setTimeRange}
@@ -194,9 +210,19 @@ export default function FieldDetailPage() {
         />
       </div>
 
+      {/* Historical Analysis */}
+      <MoistureAnalysis
+        readings={readings as MoistureReading[]}
+        threshold={field.alert_threshold}
+        loading={historyLoading}
+      />
+
+      {/* Irrigation Planner */}
+      <IrrigationPlanner fieldId={fieldId} />
+
       {/* Alert Settings */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">{UI_TEXT.alerts.settings}</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{UI_TEXT.alerts.settings}</h2>
 
         <div className="space-y-4">
           {/* Enable alerts toggle */}
@@ -207,16 +233,16 @@ export default function FieldDetailPage() {
               onChange={(e) =>
                 setAlertSettings((prev) => ({ ...prev, alerts_enabled: e.target.checked }))
               }
-              className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+              className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-green-600 focus:ring-green-500 dark:bg-gray-700"
             />
-            <span className="text-gray-700">{UI_TEXT.alerts.enable}</span>
+            <span className="text-gray-700 dark:text-gray-300">{UI_TEXT.alerts.enable}</span>
           </label>
 
           {/* Threshold slider */}
           <div className="space-y-2">
-            <label className="block text-sm text-gray-600">
+            <label className="block text-sm text-gray-600 dark:text-gray-400">
               {UI_TEXT.alerts.thresholdDesc}{' '}
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-gray-900 dark:text-white">
                 {Math.round(alertSettings.alert_threshold * 100)}%
               </span>
             </label>
@@ -232,9 +258,9 @@ export default function FieldDetailPage() {
                 }))
               }
               disabled={!alertSettings.alerts_enabled}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer disabled:opacity-50"
+              className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer disabled:opacity-50"
             />
-            <div className="flex justify-between text-xs text-gray-500">
+            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
               <span>10%</span>
               <span>50%</span>
             </div>
@@ -253,11 +279,11 @@ export default function FieldDetailPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               {UI_TEXT.fields.confirmDelete}
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               Pole &quot;{field.name}&quot; zostanie usunięte wraz ze wszystkimi danymi.
             </p>
             <div className="flex gap-3 justify-end">

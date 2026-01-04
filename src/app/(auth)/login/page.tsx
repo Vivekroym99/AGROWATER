@@ -100,14 +100,12 @@ export default function LoginPage() {
         />
 
         <div className="flex items-center justify-end">
-          <button
-            type="button"
-            className="text-sm text-gray-500 cursor-not-allowed"
-            disabled
-            title="Funkcja w przygotowaniu"
+          <Link
+            href="/forgot-password"
+            className="text-sm text-blue-600 hover:text-blue-700"
           >
             {UI_TEXT.auth.forgotPassword}
-          </button>
+          </Link>
         </div>
 
         <Button

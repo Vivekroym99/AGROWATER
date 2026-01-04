@@ -3,9 +3,16 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/database';
+import { checkRateLimit } from '@/lib/security';
 
 // GET /api/fields - Get all fields for authenticated user
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Rate limiting
+  const rateLimitResult = await checkRateLimit(request, 'api');
+  if (!rateLimitResult.success && rateLimitResult.response) {
+    return rateLimitResult.response;
+  }
+
   const cookieStore = cookies();
 
   const supabase = createServerClient<Database>(
@@ -61,6 +68,12 @@ export async function GET() {
 
 // POST /api/fields - Create new field
 export async function POST(request: NextRequest) {
+  // Rate limiting
+  const rateLimitResult = await checkRateLimit(request, 'api');
+  if (!rateLimitResult.success && rateLimitResult.response) {
+    return rateLimitResult.response;
+  }
+
   const cookieStore = cookies();
 
   const supabase = createServerClient<Database>(
@@ -105,20 +118,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert field - area_hectares is calculated by trigger
-    const fieldsTable = supabase.from('fields');
+    // Insert field using RPC function (handles GeoJSON → PostGIS conversion)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (fieldsTable as any)
-      .insert({
-        user_id: user.id,
-        name,
-        boundary,
-        crop_type: crop_type || null,
-        alert_threshold: alert_threshold || 0.3,
-        alerts_enabled: alerts_enabled ?? true,
-      })
-      .select()
-      .single();
+    const { data, error } = await (supabase.rpc as any)('insert_field', {
+      p_user_id: user.id,
+      p_name: name,
+      p_boundary: boundary,
+      p_crop_type: crop_type || null,
+      p_alert_threshold: alert_threshold || 0.3,
+      p_alerts_enabled: alerts_enabled ?? true,
+    }).single();
 
     if (error) {
       console.error('Error creating field:', error);

@@ -14,13 +14,13 @@ const sizes = {
 
 export function Spinner({ size = 'md', className }: SpinnerProps) {
   return (
-    <Loader2 className={cn('animate-spin text-blue-600', sizes[size], className)} />
+    <Loader2 className={cn('animate-spin text-blue-600 dark:text-blue-400', sizes[size], className)} />
   );
 }
 
 export function FullPageSpinner() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
       <Spinner size="lg" />
     </div>
   );

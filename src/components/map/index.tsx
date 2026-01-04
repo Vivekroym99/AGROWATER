@@ -24,3 +24,16 @@ export const DrawingMapContent = dynamic(
     loading: () => null,
   }
 );
+
+// Dynamic import for FieldsOverviewMap
+export const FieldsOverviewMap = dynamic(
+  () => import('./FieldsOverviewMap').then((mod) => mod.FieldsOverviewMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[500px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    ),
+  }
+);

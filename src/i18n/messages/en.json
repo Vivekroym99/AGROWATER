@@ -1,0 +1,240 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "fields": "My Fields",
+    "addField": "Add Field",
+    "settings": "Settings",
+    "logout": "Logout",
+    "notifications": "Notifications",
+    "theme": "Theme",
+    "language": "Language",
+    "user": "User"
+  },
+  "auth": {
+    "login": "Sign In",
+    "register": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full Name",
+    "phone": "Phone (optional)",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "acceptTerms": "I accept the terms of service and privacy policy",
+    "checkEmail": "Check your email and click the verification link.",
+    "forgotPassword": "Forgot your password?",
+    "resetPassword": "Reset Password",
+    "sendResetLink": "Send Reset Link",
+    "backToLogin": "Back to Login",
+    "resetEmailSent": "Password reset link has been sent to your email."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalFields": "Total Fields",
+    "totalArea": "Total Area",
+    "needsAttention": "Needs Attention",
+    "fieldsOk": "Fields OK",
+    "noFields": "You don't have any fields yet.",
+    "addFirst": "Add your first field to start monitoring.",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity"
+  },
+  "fields": {
+    "title": "My Fields",
+    "add": "Add Field",
+    "addNew": "Add New Field",
+    "name": "Field Name",
+    "namePlaceholder": "e.g., North Pasture",
+    "cropType": "Crop Type",
+    "selectCrop": "Select crop",
+    "area": "Area",
+    "save": "Save Field",
+    "cancel": "Cancel",
+    "delete": "Delete Field",
+    "edit": "Edit",
+    "confirmDelete": "Are you sure you want to delete this field?",
+    "deleteWarning": "will be deleted along with all its data.",
+    "back": "Back",
+    "viewAll": "View All",
+    "noFields": "No fields to display"
+  },
+  "map": {
+    "draw": "Draw",
+    "clear": "Clear",
+    "instructions": "Click to add points, double-click to finish",
+    "drawBoundary": "Draw the field boundary on the map",
+    "overview": "Map Overview"
+  },
+  "moisture": {
+    "current": "Current Moisture",
+    "history": "Moisture History",
+    "lastUpdate": "Last Update",
+    "noData": "No data",
+    "days7": "7 days",
+    "days30": "30 days",
+    "days90": "90 days",
+    "refresh": "Refresh Data",
+    "trend": "Trend",
+    "average": "Average",
+    "minimum": "Minimum",
+    "maximum": "Maximum"
+  },
+  "status": {
+    "good": "Optimal",
+    "warning": "Monitor",
+    "critical": "Warning!",
+    "unknown": "No data",
+    "goodDesc": "Field is in good condition - optimal moisture",
+    "warningDesc": "Monitor the situation - moisture is decreasing",
+    "criticalDesc": "Warning! Low moisture - consider irrigation",
+    "unknownDesc": "No data - wait for first satellite readings"
+  },
+  "alerts": {
+    "settings": "Alert Settings",
+    "enable": "Enable email notifications",
+    "threshold": "Alert Threshold",
+    "thresholdDesc": "Notify when moisture drops below:"
+  },
+  "weather": {
+    "title": "Weather",
+    "current": "Now",
+    "forecast": "5-Day Forecast",
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "wind": "Wind",
+    "pressure": "Pressure",
+    "clouds": "Cloud Cover",
+    "sunrise": "Sunrise",
+    "sunset": "Sunset",
+    "precipitation": "Precipitation",
+    "moistureImpact": {
+      "increasing": "Favorable conditions for moisture",
+      "decreasing": "Conditions reducing moisture",
+      "stable": "Stable conditions"
+    },
+    "notConfigured": "Weather service not configured",
+    "fetchError": "Failed to fetch weather data",
+    "cached": "Cached data"
+  },
+  "irrigation": {
+    "title": "Irrigation Planning",
+    "addEvent": "Add Irrigation",
+    "schedule": "7-Day Schedule",
+    "history": "History",
+    "thisYear": "This Year",
+    "irrigationCount": "Irrigations",
+    "waterAmount": "Water Amount",
+    "duration": "Duration",
+    "method": "Method",
+    "notes": "Notes",
+    "date": "Date",
+    "save": "Save",
+    "cancel": "Cancel",
+    "methods": {
+      "manual": "Manual",
+      "sprinkler": "Sprinkler",
+      "drip": "Drip",
+      "flood": "Flood",
+      "other": "Other"
+    },
+    "urgency": {
+      "none": "No Need",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "noHistory": "No irrigation records"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "deleteAll": "Delete all",
+    "noNotifications": "No notifications",
+    "refresh": "Refresh",
+    "pushSettings": "Push Notifications",
+    "pushNotSupported": "Push notifications are not supported in this browser",
+    "pushBlocked": "Notifications blocked. Change browser settings.",
+    "pushEnabled": "Notifications enabled",
+    "enablePush": "Enable push notifications",
+    "enable": "Enable",
+    "disable": "Disable"
+  },
+  "crops": {
+    "wheat": "Wheat",
+    "winter_wheat": "Winter Wheat",
+    "maize": "Corn",
+    "rapeseed": "Rapeseed",
+    "potatoes": "Potatoes",
+    "sugar_beet": "Sugar Beet",
+    "barley": "Barley",
+    "rye": "Rye",
+    "oats": "Oats",
+    "other": "Other"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Saved successfully",
+    "hectares": "ha",
+    "tryAgain": "Try again",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "passwordMin": "Password must be at least 8 characters",
+    "generic": "Something went wrong. Please try again.",
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized",
+    "networkError": "Network error"
+  },
+  "landing": {
+    "headline": "Monitor Soil Moisture from Satellite",
+    "subheadline": "No sensors. No installation. For free.",
+    "cta": "Create Free Account",
+    "login": "Sign In",
+    "howItWorks": "How It Works?",
+    "step1": "Draw your field on the map",
+    "step2": "Receive satellite data",
+    "step3": "Get drought alerts",
+    "features": {
+      "satellite": "Sentinel-1 satellite data",
+      "updates": "Updates every few days",
+      "alerts": "Email alerts for low moisture",
+      "mobile": "Works on phone and computer"
+    },
+    "startMonitoring": "Start monitoring your fields"
+  },
+  "export": {
+    "title": "Export",
+    "csv": "Export CSV",
+    "pdf": "Export PDF",
+    "allFields": "All Fields",
+    "currentField": "Current Field"
+  },
+  "analysis": {
+    "title": "Historical Analysis",
+    "trend": "Trend",
+    "trendUp": "Increasing",
+    "trendDown": "Decreasing",
+    "trendStable": "Stable",
+    "belowThreshold": "Days below threshold",
+    "dataPoints": "Data points"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "title": "Language",
+    "select": "Select language"
+  }
+}

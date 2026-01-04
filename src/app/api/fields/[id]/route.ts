@@ -114,29 +114,31 @@ export async function PUT(
     const body = await request.json();
     const { name, boundary, crop_type, alert_threshold, alerts_enabled } = body;
 
-    // Build update object with only provided fields
-    const updates: Database['public']['Tables']['fields']['Update'] = {};
-    if (name !== undefined) updates.name = name;
-    if (boundary !== undefined) updates.boundary = boundary;
-    if (crop_type !== undefined) updates.crop_type = crop_type;
-    if (alert_threshold !== undefined) updates.alert_threshold = alert_threshold;
-    if (alerts_enabled !== undefined) updates.alerts_enabled = alerts_enabled;
-
-    if (Object.keys(updates).length === 0) {
+    // Check if there's anything to update
+    if (
+      name === undefined &&
+      boundary === undefined &&
+      crop_type === undefined &&
+      alert_threshold === undefined &&
+      alerts_enabled === undefined
+    ) {
       return NextResponse.json(
         { error: 'No fields to update' },
         { status: 400 }
       );
     }
 
-    const fieldsTable = supabase.from('fields');
+    // Update field using RPC function (handles GeoJSON → PostGIS conversion)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (fieldsTable as any)
-      .update(updates)
-      .eq('id', id)
-      .eq('user_id', user.id) // Ensure user owns the field
-      .select()
-      .single();
+    const { data, error } = await (supabase.rpc as any)('update_field', {
+      p_field_id: id,
+      p_user_id: user.id,
+      p_name: name ?? null,
+      p_boundary: boundary ?? null,
+      p_crop_type: crop_type ?? null,
+      p_alert_threshold: alert_threshold ?? null,
+      p_alerts_enabled: alerts_enabled ?? null,
+    }).single();
 
     if (error) {
       if (error.code === 'PGRST116') {

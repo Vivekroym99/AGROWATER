@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { FieldCard } from '@/components/fields/FieldCard';
 import { Spinner } from '@/components/ui/Spinner';
+import { ExportMenu } from '@/components/export';
 import { UI_TEXT } from '@/lib/constants';
 import { useFields } from '@/hooks/useFields';
 import { Plus, Map, AlertCircle } from 'lucide-react';
@@ -49,12 +50,15 @@ export default function FieldsPage() {
         <h1 className="text-2xl font-bold text-gray-900">
           {UI_TEXT.fields.title}
         </h1>
-        <Link href="/fields/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            {UI_TEXT.fields.add}
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          {fields.length > 0 && <ExportMenu fields={fields} />}
+          <Link href="/fields/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              {UI_TEXT.fields.add}
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Fields list or empty state */}

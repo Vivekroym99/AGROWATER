@@ -5,20 +5,24 @@ import type { Database } from '@/types/database';
 import { fetchMoistureForField, getDateRange } from '@/lib/earthengine';
 import type { GeoJSONPolygon, CronJobResult, ProcessFieldResult } from '@/lib/earthengine';
 import { sendLowMoistureAlert } from '@/lib/email';
+import { checkRateLimit } from '@/lib/security';
+import { sendLowMoistureNotification } from '@/lib/push';
 
-// Interface for field data with profile join
-interface FieldWithProfile {
+// Interface for field data from fields_with_status view
+interface FieldData {
   id: string;
   user_id: string;
   name: string;
   boundary: unknown;
   alert_threshold: number;
   alerts_enabled: boolean;
-  profiles: {
-    id: string;
-    email: string;
-    full_name: string | null;
-  } | null;
+}
+
+// Interface for profile data
+interface ProfileData {
+  id: string;
+  email: string;
+  full_name: string | null;
 }
 
 /**
@@ -29,6 +33,12 @@ interface FieldWithProfile {
  * Security: Verifies CRON_SECRET header
  */
 export async function POST(request: NextRequest) {
+  // Rate limiting for cron jobs
+  const rateLimitResult = await checkRateLimit(request, 'cron');
+  if (!rateLimitResult.success && rateLimitResult.response) {
+    return rateLimitResult.response;
+  }
+
   // Verify cron secret (Vercel sends this header for cron jobs)
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
@@ -62,23 +72,31 @@ export async function POST(request: NextRequest) {
   };
 
   try {
-    // Get all active fields
+    // Get all active fields with boundary as GeoJSON
     const { data: fieldsData, error: fieldsError } = await supabase
-      .from('fields')
+      .from('fields_with_status')
       .select(`
         id,
         user_id,
         name,
         boundary,
         alert_threshold,
-        alerts_enabled,
-        profiles!inner (
-          id,
-          email,
-          full_name
-        )
+        alerts_enabled
       `)
       .eq('is_active', true);
+
+    // Get profiles separately for email alerts
+    const fields = fieldsData as unknown as FieldData[];
+    const userIds = Array.from(new Set(fields.map(f => f.user_id)));
+    const { data: profilesData } = await supabase
+      .from('profiles')
+      .select('id, email, full_name')
+      .in('id', userIds);
+
+    const profiles = (profilesData || []) as ProfileData[];
+    const profilesMap = new Map<string, ProfileData>(
+      profiles.map(p => [p.id, p])
+    );
 
     if (fieldsError) {
       console.error('Error fetching fields:', fieldsError);
@@ -87,9 +105,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    // Cast to typed array
-    const fields = fieldsData as unknown as FieldWithProfile[];
 
     if (!fields || fields.length === 0) {
       return NextResponse.json({
@@ -195,15 +210,38 @@ export async function POST(request: NextRequest) {
             if (!alertError) {
               result.alerts_sent++;
 
+              // Send push notification
+              const moisturePercent = latestReading.moisture_index * 100;
+              const thresholdPercent = field.alert_threshold * 100;
+
+              try {
+                const pushResult = await sendLowMoistureNotification(
+                  field.user_id,
+                  field.id,
+                  field.name,
+                  moisturePercent,
+                  thresholdPercent
+                );
+
+                if (pushResult.pushSent > 0) {
+                  console.log(`Push notification sent to ${pushResult.pushSent} device(s) for field ${field.name}`);
+                }
+                if (pushResult.errors.length > 0) {
+                  console.warn(`Push notification errors for field ${field.name}:`, pushResult.errors);
+                }
+              } catch (pushError) {
+                console.error(`Failed to send push notification for field ${field.name}:`, pushError);
+              }
+
               // Send email via Resend API
-              const profile = field.profiles;
+              const profile = profilesMap.get(field.user_id) as ProfileData | undefined;
               if (profile?.email) {
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
                 await sendLowMoistureAlert(profile.email, {
                   recipientName: profile.full_name || '',
                   fieldName: field.name,
-                  currentMoisture: latestReading.moisture_index * 100,
-                  threshold: field.alert_threshold * 100,
+                  currentMoisture: moisturePercent,
+                  threshold: thresholdPercent,
                   fieldUrl: `${appUrl}/fields/${field.id}`,
                 });
 
@@ -217,7 +255,7 @@ export async function POST(request: NextRequest) {
               }
 
               console.log(
-                `Alert sent for field ${field.name}: moisture ${(latestReading.moisture_index * 100).toFixed(1)}%`
+                `Alert sent for field ${field.name}: moisture ${moisturePercent.toFixed(1)}%`
               );
             }
           }

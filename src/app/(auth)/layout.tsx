@@ -7,10 +7,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800 flex flex-col">
       {/* Header with logo */}
       <header className="p-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
           <Droplets className="h-8 w-8" />
           <span className="text-xl font-bold">AgroWater</span>
         </Link>
@@ -24,7 +24,7 @@ export default function AuthLayout({
       </main>
 
       {/* Footer */}
-      <footer className="p-4 text-center text-sm text-gray-500">
+      <footer className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
         <p>&copy; {new Date().getFullYear()} AgroWater. Wszelkie prawa zastrzezone.</p>
       </footer>
     </div>

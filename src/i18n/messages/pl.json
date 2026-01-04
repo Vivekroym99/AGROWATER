@@ -1,0 +1,240 @@
+{
+  "nav": {
+    "dashboard": "Panel główny",
+    "fields": "Moje pola",
+    "addField": "Dodaj pole",
+    "settings": "Ustawienia",
+    "logout": "Wyloguj",
+    "notifications": "Powiadomienia",
+    "theme": "Motyw",
+    "language": "Język",
+    "user": "Użytkownik"
+  },
+  "auth": {
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "email": "Email",
+    "password": "Hasło",
+    "fullName": "Imię i nazwisko",
+    "phone": "Telefon (opcjonalnie)",
+    "noAccount": "Nie masz konta?",
+    "hasAccount": "Masz już konto?",
+    "acceptTerms": "Akceptuję regulamin i politykę prywatności",
+    "checkEmail": "Sprawdź swoją skrzynkę email i kliknij link weryfikacyjny.",
+    "forgotPassword": "Zapomniałeś hasła?",
+    "resetPassword": "Zresetuj hasło",
+    "sendResetLink": "Wyślij link do resetowania",
+    "backToLogin": "Powrót do logowania",
+    "resetEmailSent": "Link do resetowania hasła został wysłany na Twój adres email."
+  },
+  "dashboard": {
+    "title": "Panel główny",
+    "totalFields": "Wszystkie pola",
+    "totalArea": "Łączna powierzchnia",
+    "needsAttention": "Wymaga uwagi",
+    "fieldsOk": "W normie",
+    "noFields": "Nie masz jeszcze żadnych pól.",
+    "addFirst": "Dodaj pierwsze pole, aby rozpocząć monitorowanie.",
+    "overview": "Przegląd",
+    "recentActivity": "Ostatnia aktywność"
+  },
+  "fields": {
+    "title": "Moje pola",
+    "add": "Dodaj pole",
+    "addNew": "Dodaj nowe pole",
+    "name": "Nazwa pola",
+    "namePlaceholder": "np. Pole za stodołą",
+    "cropType": "Rodzaj uprawy",
+    "selectCrop": "Wybierz uprawę",
+    "area": "Powierzchnia",
+    "save": "Zapisz pole",
+    "cancel": "Anuluj",
+    "delete": "Usuń pole",
+    "edit": "Edytuj",
+    "confirmDelete": "Czy na pewno chcesz usunąć to pole?",
+    "deleteWarning": "zostanie usunięte wraz ze wszystkimi danymi.",
+    "back": "Powrót",
+    "viewAll": "Zobacz wszystkie",
+    "noFields": "Brak pól do wyświetlenia"
+  },
+  "map": {
+    "draw": "Rysuj",
+    "clear": "Wyczyść",
+    "instructions": "Kliknij aby dodać punkty, kliknij dwukrotnie aby zakończyć",
+    "drawBoundary": "Narysuj granicę pola na mapie",
+    "overview": "Przegląd mapy"
+  },
+  "moisture": {
+    "current": "Aktualna wilgotność",
+    "history": "Historia wilgotności",
+    "lastUpdate": "Ostatnia aktualizacja",
+    "noData": "Brak danych",
+    "days7": "7 dni",
+    "days30": "30 dni",
+    "days90": "90 dni",
+    "refresh": "Odśwież dane",
+    "trend": "Trend",
+    "average": "Średnia",
+    "minimum": "Minimum",
+    "maximum": "Maksimum"
+  },
+  "status": {
+    "good": "Optymalnie",
+    "warning": "Monitoruj",
+    "critical": "Uwaga!",
+    "unknown": "Brak danych",
+    "goodDesc": "Pole w dobrym stanie - wilgotność optymalna",
+    "warningDesc": "Monitoruj sytuację - wilgotność spada",
+    "criticalDesc": "Uwaga! Niska wilgotność - rozważ nawadnianie",
+    "unknownDesc": "Brak danych - poczekaj na pierwsze odczyty satelitarne"
+  },
+  "alerts": {
+    "settings": "Ustawienia alertów",
+    "enable": "Włącz powiadomienia email",
+    "threshold": "Próg alertu",
+    "thresholdDesc": "Powiadom gdy wilgotność spadnie poniżej:"
+  },
+  "weather": {
+    "title": "Pogoda",
+    "current": "Teraz",
+    "forecast": "Prognoza 5-dniowa",
+    "temperature": "Temperatura",
+    "humidity": "Wilgotność",
+    "wind": "Wiatr",
+    "pressure": "Ciśnienie",
+    "clouds": "Zachmurzenie",
+    "sunrise": "Wschód",
+    "sunset": "Zachód",
+    "precipitation": "Opady",
+    "moistureImpact": {
+      "increasing": "Sprzyjające warunki dla wilgotności",
+      "decreasing": "Warunki zmniejszające wilgotność",
+      "stable": "Stabilne warunki"
+    },
+    "notConfigured": "Usługa pogodowa nie jest skonfigurowana",
+    "fetchError": "Nie udało się pobrać danych pogodowych",
+    "cached": "Dane z pamięci podręcznej"
+  },
+  "irrigation": {
+    "title": "Planowanie nawadniania",
+    "addEvent": "Dodaj nawodnienie",
+    "schedule": "Harmonogram 7 dni",
+    "history": "Historia",
+    "thisYear": "Ten rok",
+    "irrigationCount": "Nawodnień",
+    "waterAmount": "Ilość wody",
+    "duration": "Czas trwania",
+    "method": "Metoda",
+    "notes": "Notatki",
+    "date": "Data",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "methods": {
+      "manual": "Ręczne",
+      "sprinkler": "Zraszacze",
+      "drip": "Kroplowe",
+      "flood": "Zalewowe",
+      "other": "Inne"
+    },
+    "urgency": {
+      "none": "Brak potrzeby",
+      "low": "Niska",
+      "medium": "Umiarkowana",
+      "high": "Wysoka",
+      "critical": "Krytyczna"
+    },
+    "noHistory": "Brak zapisanych nawodnień"
+  },
+  "notifications": {
+    "title": "Powiadomienia",
+    "markAllRead": "Oznacz wszystkie jako przeczytane",
+    "deleteAll": "Usuń wszystkie",
+    "noNotifications": "Brak powiadomień",
+    "refresh": "Odśwież",
+    "pushSettings": "Powiadomienia push",
+    "pushNotSupported": "Powiadomienia push nie są wspierane w tej przeglądarce",
+    "pushBlocked": "Powiadomienia zablokowane. Zmień ustawienia przeglądarki.",
+    "pushEnabled": "Powiadomienia włączone",
+    "enablePush": "Włącz powiadomienia push",
+    "enable": "Włącz",
+    "disable": "Wyłącz"
+  },
+  "crops": {
+    "wheat": "Pszenica",
+    "winter_wheat": "Pszenica ozima",
+    "maize": "Kukurydza",
+    "rapeseed": "Rzepak",
+    "potatoes": "Ziemniaki",
+    "sugar_beet": "Burak cukrowy",
+    "barley": "Jęczmień",
+    "rye": "Żyto",
+    "oats": "Owies",
+    "other": "Inne"
+  },
+  "common": {
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "loading": "Ładowanie...",
+    "error": "Wystąpił błąd",
+    "success": "Zapisano pomyślnie",
+    "hectares": "ha",
+    "tryAgain": "Spróbuj ponownie",
+    "close": "Zamknij",
+    "confirm": "Potwierdź",
+    "yes": "Tak",
+    "no": "Nie"
+  },
+  "errors": {
+    "required": "To pole jest wymagane",
+    "invalidEmail": "Nieprawidłowy adres email",
+    "passwordMin": "Hasło musi mieć minimum 8 znaków",
+    "generic": "Coś poszło nie tak. Spróbuj ponownie.",
+    "notFound": "Nie znaleziono",
+    "unauthorized": "Brak autoryzacji",
+    "networkError": "Błąd połączenia"
+  },
+  "landing": {
+    "headline": "Monitoruj wilgotność gleby z satelity",
+    "subheadline": "Bez czujników. Bez instalacji. Za darmo.",
+    "cta": "Załóż konto za darmo",
+    "login": "Zaloguj się",
+    "howItWorks": "Jak to działa?",
+    "step1": "Narysuj pole na mapie",
+    "step2": "Otrzymuj dane satelitarne",
+    "step3": "Dostaj alerty o suszy",
+    "features": {
+      "satellite": "Dane z satelity Sentinel-1",
+      "updates": "Aktualizacja co kilka dni",
+      "alerts": "Alerty email o niskiej wilgotności",
+      "mobile": "Działa na telefonie i komputerze"
+    },
+    "startMonitoring": "Zacznij monitorować swoje pola"
+  },
+  "export": {
+    "title": "Eksportuj",
+    "csv": "Eksportuj CSV",
+    "pdf": "Eksportuj PDF",
+    "allFields": "Wszystkie pola",
+    "currentField": "Bieżące pole"
+  },
+  "analysis": {
+    "title": "Analiza historyczna",
+    "trend": "Trend",
+    "trendUp": "Rosnący",
+    "trendDown": "Malejący",
+    "trendStable": "Stabilny",
+    "belowThreshold": "Dni poniżej progu",
+    "dataPoints": "Punktów danych"
+  },
+  "theme": {
+    "light": "Jasny",
+    "dark": "Ciemny",
+    "system": "Systemowy"
+  },
+  "language": {
+    "title": "Język",
+    "select": "Wybierz język"
+  }
+}
