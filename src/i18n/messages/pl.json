@@ -228,6 +228,47 @@
     "belowThreshold": "Dni poniżej progu",
     "dataPoints": "Punktów danych"
   },
+  "ndvi": {
+    "title": "Indeks wegetacji NDVI",
+    "history": "Historia NDVI",
+    "current": "Aktualny NDVI",
+    "noData": "Brak danych NDVI - pole wymaga synchronizacji z Agro API",
+    "status": {
+      "excellent": "Doskonały",
+      "good": "Dobry",
+      "moderate": "Umiarkowany",
+      "poor": "Słaby",
+      "unknown": "Brak danych"
+    },
+    "statusDesc": {
+      "excellent": "Roślinność w doskonałym stanie",
+      "good": "Roślinność w dobrym stanie",
+      "moderate": "Roślinność wymaga uwagi",
+      "poor": "Roślinność w słabym stanie - możliwy stres",
+      "unknown": "Brak danych - poczekaj na synchronizację z Agro API"
+    },
+    "trend": "Trend",
+    "trendImproving": "Poprawia się",
+    "trendDeclining": "Pogarsza się",
+    "trendStable": "Stabilny",
+    "syncRequired": "Wymagana synchronizacja",
+    "syncButton": "Synchronizuj z Agro API",
+    "syncPending": "Synchronizacja w toku..."
+  },
+  "agronomic": {
+    "title": "Dane agronomiczne",
+    "gdd": "Suma temperatur (GDD)",
+    "gddUnit": "stopniodni",
+    "gddDesc": "Stopniodni powyżej 10°C od początku sezonu",
+    "precipitation": "Suma opadów",
+    "precipitationUnit": "mm",
+    "precipitationDesc": "Łączne opady od początku sezonu",
+    "soilMoisture": "Wilgotność gleby (API)",
+    "soilTemp": "Temp. gleby (10cm)",
+    "seasonStart": "Początek sezonu",
+    "notConfigured": "Agro API nie skonfigurowane",
+    "loading": "Ładowanie danych agronomicznych..."
+  },
   "theme": {
     "light": "Jasny",
     "dark": "Ciemny",
@@ -259,5 +300,37 @@
     "deleteConfirmPlaceholder": "USUŃ KONTO",
     "deleteConfirmText": "USUŃ KONTO",
     "deleteError": "Nie udało się usunąć konta"
+  },
+  "cropRecommendation": {
+    "title": "Zalecenia dla uprawy",
+    "recommended": "Zalecane dla",
+    "range": "Zalecany zakres",
+    "applyRecommended": "Zastosuj zalecany próg",
+    "sensitivityLabel": "Wrażliwość na suszę",
+    "sensitivityVeryHigh": "Bardzo wysoka",
+    "sensitivityHigh": "Wysoka",
+    "sensitivityMedium": "Średnia",
+    "sensitivityLow": "Niska",
+    "sensitivityDefault": "Standardowa",
+    "infoText": "Różne uprawy mają różne wymagania wodne. Poniżej znajdziesz zalecany próg alertu dla wybranej uprawy."
+  },
+  "satellite": {
+    "title": "Zdjęcia satelitarne",
+    "selectDate": "Wybierz datę",
+    "selectLayer": "Wybierz warstwę",
+    "layerOsm": "Mapa",
+    "layerTrueColor": "Kolor naturalny",
+    "layerFalseColor": "Fałszywy kolor",
+    "layerNdvi": "NDVI",
+    "layerEvi": "EVI",
+    "source": "Źródło",
+    "cloudCoverage": "Zachmurzenie",
+    "noImages": "Brak dostępnych zdjęć satelitarnych",
+    "notSynced": "Synchronizacja z Agro API wymagana",
+    "syncFirst": "Zsynchronizuj pole z Agro API, aby zobaczyć zdjęcia satelitarne",
+    "loading": "Ładowanie zdjęć...",
+    "imageDate": "Data zdjęcia",
+    "sentinel2": "Sentinel-2",
+    "landsat8": "Landsat-8"
   }
 }

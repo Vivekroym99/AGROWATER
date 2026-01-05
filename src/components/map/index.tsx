@@ -37,3 +37,16 @@ export const FieldsOverviewMap = dynamic(
     ),
   }
 );
+
+// Dynamic import for SatelliteMap
+export const SatelliteMap = dynamic(
+  () => import('./SatelliteMap').then((mod) => mod.SatelliteMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[400px] w-full bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    ),
+  }
+);

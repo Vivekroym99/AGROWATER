@@ -228,6 +228,47 @@
     "belowThreshold": "Days below threshold",
     "dataPoints": "Data points"
   },
+  "ndvi": {
+    "title": "NDVI Vegetation Index",
+    "history": "NDVI History",
+    "current": "Current NDVI",
+    "noData": "No NDVI data - field needs sync with Agro API",
+    "status": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "moderate": "Moderate",
+      "poor": "Poor",
+      "unknown": "No data"
+    },
+    "statusDesc": {
+      "excellent": "Vegetation in excellent condition",
+      "good": "Vegetation in good condition",
+      "moderate": "Vegetation needs attention",
+      "poor": "Vegetation in poor condition - possible stress",
+      "unknown": "No data - wait for Agro API sync"
+    },
+    "trend": "Trend",
+    "trendImproving": "Improving",
+    "trendDeclining": "Declining",
+    "trendStable": "Stable",
+    "syncRequired": "Sync required",
+    "syncButton": "Sync with Agro API",
+    "syncPending": "Syncing..."
+  },
+  "agronomic": {
+    "title": "Agronomic Data",
+    "gdd": "Growing Degree Days (GDD)",
+    "gddUnit": "degree-days",
+    "gddDesc": "Degree-days above 10°C since season start",
+    "precipitation": "Cumulative Precipitation",
+    "precipitationUnit": "mm",
+    "precipitationDesc": "Total precipitation since season start",
+    "soilMoisture": "Soil Moisture (API)",
+    "soilTemp": "Soil Temp (10cm)",
+    "seasonStart": "Season Start",
+    "notConfigured": "Agro API not configured",
+    "loading": "Loading agronomic data..."
+  },
   "theme": {
     "light": "Light",
     "dark": "Dark",
@@ -259,5 +300,37 @@
     "deleteConfirmPlaceholder": "DELETE ACCOUNT",
     "deleteConfirmText": "DELETE ACCOUNT",
     "deleteError": "Failed to delete account"
+  },
+  "cropRecommendation": {
+    "title": "Crop Recommendations",
+    "recommended": "Recommended for",
+    "range": "Recommended range",
+    "applyRecommended": "Apply recommended threshold",
+    "sensitivityLabel": "Drought sensitivity",
+    "sensitivityVeryHigh": "Very high",
+    "sensitivityHigh": "High",
+    "sensitivityMedium": "Medium",
+    "sensitivityLow": "Low",
+    "sensitivityDefault": "Standard",
+    "infoText": "Different crops have different water requirements. Below you can find the recommended alert threshold for the selected crop."
+  },
+  "satellite": {
+    "title": "Satellite Imagery",
+    "selectDate": "Select date",
+    "selectLayer": "Select layer",
+    "layerOsm": "Map",
+    "layerTrueColor": "True Color",
+    "layerFalseColor": "False Color",
+    "layerNdvi": "NDVI",
+    "layerEvi": "EVI",
+    "source": "Source",
+    "cloudCoverage": "Cloud coverage",
+    "noImages": "No satellite images available",
+    "notSynced": "Agro API sync required",
+    "syncFirst": "Sync field with Agro API to see satellite imagery",
+    "loading": "Loading images...",
+    "imageDate": "Image date",
+    "sentinel2": "Sentinel-2",
+    "landsat8": "Landsat-8"
   }
 }

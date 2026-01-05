@@ -272,6 +272,176 @@ export interface Database {
           created_at?: string;
         };
       };
+      // Agro API tables
+      agro_polygons: {
+        Row: {
+          id: string;
+          field_id: string;
+          agro_polygon_id: string;
+          sync_status: 'synced' | 'pending' | 'error' | 'deleted';
+          last_synced_at: string;
+          error_message: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          field_id: string;
+          agro_polygon_id: string;
+          sync_status?: 'synced' | 'pending' | 'error' | 'deleted';
+          last_synced_at?: string;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          field_id?: string;
+          agro_polygon_id?: string;
+          sync_status?: 'synced' | 'pending' | 'error' | 'deleted';
+          last_synced_at?: string;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      ndvi_readings: {
+        Row: {
+          id: string;
+          field_id: string;
+          observation_date: string;
+          ndvi_mean: number | null;
+          ndvi_min: number | null;
+          ndvi_max: number | null;
+          evi_mean: number | null;
+          data_coverage: number | null;
+          cloud_coverage: number | null;
+          source: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          field_id: string;
+          observation_date: string;
+          ndvi_mean?: number | null;
+          ndvi_min?: number | null;
+          ndvi_max?: number | null;
+          evi_mean?: number | null;
+          data_coverage?: number | null;
+          cloud_coverage?: number | null;
+          source?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          field_id?: string;
+          observation_date?: string;
+          ndvi_mean?: number | null;
+          ndvi_min?: number | null;
+          ndvi_max?: number | null;
+          evi_mean?: number | null;
+          data_coverage?: number | null;
+          cloud_coverage?: number | null;
+          source?: string;
+          created_at?: string;
+        };
+      };
+      gdd_readings: {
+        Row: {
+          id: string;
+          field_id: string;
+          start_date: string;
+          end_date: string;
+          base_temp: number;
+          accumulated_gdd: number;
+          days_count: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          field_id: string;
+          start_date: string;
+          end_date: string;
+          base_temp?: number;
+          accumulated_gdd: number;
+          days_count: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          field_id?: string;
+          start_date?: string;
+          end_date?: string;
+          base_temp?: number;
+          accumulated_gdd?: number;
+          days_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      precipitation_readings: {
+        Row: {
+          id: string;
+          field_id: string;
+          start_date: string;
+          end_date: string;
+          total_precipitation_mm: number;
+          days_count: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          field_id: string;
+          start_date: string;
+          end_date: string;
+          total_precipitation_mm: number;
+          days_count: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          field_id?: string;
+          start_date?: string;
+          end_date?: string;
+          total_precipitation_mm?: number;
+          days_count?: number;
+          created_at?: string;
+        };
+      };
+      agro_soil_readings: {
+        Row: {
+          id: string;
+          field_id: string;
+          observation_date: string;
+          soil_moisture: number | null;
+          soil_temp_surface: number | null;
+          soil_temp_10cm: number | null;
+          source: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          field_id: string;
+          observation_date: string;
+          soil_moisture?: number | null;
+          soil_temp_surface?: number | null;
+          soil_temp_10cm?: number | null;
+          source?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          field_id?: string;
+          observation_date?: string;
+          soil_moisture?: number | null;
+          soil_temp_surface?: number | null;
+          soil_temp_10cm?: number | null;
+          source?: string;
+          created_at?: string;
+        };
+      };
     };
     Views: {
       latest_field_moisture: {
@@ -299,6 +469,39 @@ export interface Database {
           current_moisture: number | null;
           last_reading_date: string | null;
           status: 'good' | 'warning' | 'critical' | 'unknown';
+        };
+      };
+      latest_field_ndvi: {
+        Row: {
+          field_id: string;
+          observation_date: string;
+          ndvi_mean: number | null;
+          ndvi_min: number | null;
+          ndvi_max: number | null;
+          evi_mean: number | null;
+          data_coverage: number | null;
+          cloud_coverage: number | null;
+        };
+      };
+      fields_with_vegetation: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          boundary: Json;
+          area_hectares: number | null;
+          crop_type: string | null;
+          alert_threshold: number;
+          alerts_enabled: boolean;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+          current_moisture: number | null;
+          last_moisture_date: string | null;
+          current_ndvi: number | null;
+          last_ndvi_date: string | null;
+          moisture_status: 'good' | 'warning' | 'critical' | 'unknown';
+          vegetation_status: 'excellent' | 'good' | 'moderate' | 'poor' | 'unknown';
         };
       };
     };
@@ -384,8 +587,23 @@ export type Notification = Database['public']['Tables']['notifications']['Row'];
 // Status type for moisture levels
 export type MoistureStatus = 'good' | 'warning' | 'critical' | 'unknown';
 
+// Vegetation status type for NDVI
+export type VegetationStatus = 'excellent' | 'good' | 'moderate' | 'poor' | 'unknown';
+
+// Agro polygon sync status
+export type AgroSyncStatus = 'synced' | 'pending' | 'error' | 'deleted';
+
 // Notification type
 export type NotificationType = 'low_moisture' | 'data_updated' | 'system' | 'info';
+
+// Agro API convenience types
+export type AgroPolygonMapping = Database['public']['Tables']['agro_polygons']['Row'];
+export type NDVIReading = Database['public']['Tables']['ndvi_readings']['Row'];
+export type GDDReading = Database['public']['Tables']['gdd_readings']['Row'];
+export type PrecipitationReading = Database['public']['Tables']['precipitation_readings']['Row'];
+export type AgroSoilReading = Database['public']['Tables']['agro_soil_readings']['Row'];
+export type LatestFieldNDVI = Database['public']['Views']['latest_field_ndvi']['Row'];
+export type FieldWithVegetation = Database['public']['Views']['fields_with_vegetation']['Row'];
 
 // GeoJSON types for field boundaries
 export interface GeoJSONPolygon {

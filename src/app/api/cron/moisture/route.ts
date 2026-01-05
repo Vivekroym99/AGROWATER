@@ -7,6 +7,7 @@ import type { GeoJSONPolygon, CronJobResult, ProcessFieldResult } from '@/lib/ea
 import { sendLowMoistureAlert } from '@/lib/email';
 import { checkRateLimit } from '@/lib/security';
 import { sendLowMoistureNotification } from '@/lib/push';
+import { getCropLabel } from '@/lib/constants';
 
 // Interface for field data from fields_with_status view
 interface FieldData {
@@ -16,6 +17,7 @@ interface FieldData {
   boundary: unknown;
   alert_threshold: number;
   alerts_enabled: boolean;
+  crop_type: string | null;
 }
 
 // Interface for profile data
@@ -81,7 +83,8 @@ export async function POST(request: NextRequest) {
         name,
         boundary,
         alert_threshold,
-        alerts_enabled
+        alerts_enabled,
+        crop_type
       `)
       .eq('is_active', true);
 
@@ -243,6 +246,8 @@ export async function POST(request: NextRequest) {
                   currentMoisture: moisturePercent,
                   threshold: thresholdPercent,
                   fieldUrl: `${appUrl}/fields/${field.id}`,
+                  cropType: field.crop_type,
+                  cropLabel: getCropLabel(field.crop_type),
                 });
 
                 // Mark alert as sent

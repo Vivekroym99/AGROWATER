@@ -8,6 +8,8 @@ export interface LowMoistureEmailData {
   currentMoisture: number; // percentage
   threshold: number; // percentage
   fieldUrl: string;
+  cropType?: string | null; // e.g., 'potatoes', 'wheat'
+  cropLabel?: string | null; // Polish label e.g., 'Ziemniaki', 'Pszenica'
 }
 
 /**
@@ -21,7 +23,7 @@ export function getLowMoistureSubject(fieldName: string): string {
  * Generate the HTML email body for low moisture alert
  */
 export function getLowMoistureHtml(data: LowMoistureEmailData): string {
-  const { recipientName, fieldName, currentMoisture, threshold, fieldUrl } = data;
+  const { recipientName, fieldName, currentMoisture, threshold, fieldUrl, cropLabel } = data;
 
   return `
 <!DOCTYPE html>
@@ -62,7 +64,7 @@ export function getLowMoistureHtml(data: LowMoistureEmailData): string {
                 <tr>
                   <td style="padding: 20px;">
                     <p style="margin: 0 0 12px; font-size: 14px; color: #991b1b; font-weight: 600;">
-                      Pole: ${fieldName}
+                      Pole: ${fieldName}${cropLabel ? ` (${cropLabel})` : ''}
                     </p>
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                       <tr>
@@ -133,7 +135,7 @@ export function getLowMoistureHtml(data: LowMoistureEmailData): string {
  * Generate the plain text email body for low moisture alert
  */
 export function getLowMoistureText(data: LowMoistureEmailData): string {
-  const { recipientName, fieldName, currentMoisture, threshold, fieldUrl } = data;
+  const { recipientName, fieldName, currentMoisture, threshold, fieldUrl, cropLabel } = data;
 
   return `
 ALERT WILGOTNOŚCI - AgroWater
@@ -142,7 +144,7 @@ Cześć ${recipientName || 'Użytkowniku'},
 
 Wilgotność gleby na Twoim polu spadła poniżej ustawionego progu alertu.
 
-POLE: ${fieldName}
+POLE: ${fieldName}${cropLabel ? ` (${cropLabel})` : ''}
 Aktualna wilgotność: ${currentMoisture.toFixed(0)}%
 Próg alertu: ${threshold.toFixed(0)}%
 

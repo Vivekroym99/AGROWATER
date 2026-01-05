@@ -5,7 +5,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { UI_TEXT, CROP_TYPES } from '@/lib/constants';
+import {
+  UI_TEXT,
+  CROP_TYPES,
+  CROP_MOISTURE_THRESHOLDS,
+  CROP_RECOMMENDATION_TEXT,
+  getRecommendedThreshold,
+  getThresholdRangeText,
+  getCropLabel,
+} from '@/lib/constants';
 import type { GeoJSONPolygon } from '@/types/database';
 
 const fieldSchema = z.object({
@@ -38,6 +46,7 @@ export function FieldForm({
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FieldFormData>({
     resolver: zodResolver(fieldSchema),
@@ -50,7 +59,30 @@ export function FieldForm({
   });
 
   const alertThreshold = watch('alert_threshold');
+  const cropType = watch('crop_type');
   const hasPolygon = polygon !== null;
+
+  // Get crop recommendation info
+  const recommendedThreshold = getRecommendedThreshold(cropType);
+  const thresholdRange = getThresholdRangeText(cropType);
+  const cropLabel = getCropLabel(cropType);
+  const cropThresholds = cropType ? CROP_MOISTURE_THRESHOLDS[cropType] : null;
+
+  // Get sensitivity label
+  const getSensitivityLabel = (sensitivity: string | undefined): string => {
+    switch (sensitivity) {
+      case 'very_high': return CROP_RECOMMENDATION_TEXT.sensitivityVeryHigh;
+      case 'high': return CROP_RECOMMENDATION_TEXT.sensitivityHigh;
+      case 'medium': return CROP_RECOMMENDATION_TEXT.sensitivityMedium;
+      case 'low': return CROP_RECOMMENDATION_TEXT.sensitivityLow;
+      default: return CROP_RECOMMENDATION_TEXT.sensitivityDefault;
+    }
+  };
+
+  // Handler to apply recommended threshold
+  const handleApplyRecommended = () => {
+    setValue('alert_threshold', recommendedThreshold, { shouldValidate: true });
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -103,7 +135,7 @@ export function FieldForm({
             type="range"
             min="0.1"
             max="0.5"
-            step="0.05"
+            step="0.01"
             className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
             {...register('alert_threshold', { valueAsNumber: true })}
           />
@@ -116,6 +148,34 @@ export function FieldForm({
           <span>50%</span>
         </div>
       </div>
+
+      {/* Crop-specific recommendation */}
+      {cropType && thresholdRange && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-blue-800">
+                {CROP_RECOMMENDATION_TEXT.recommended} {cropLabel}: {thresholdRange}
+              </p>
+              {cropThresholds && (
+                <p className="text-xs text-blue-600 mt-0.5">
+                  {CROP_RECOMMENDATION_TEXT.sensitivityLabel}: {getSensitivityLabel(cropThresholds.sensitivity)}
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={handleApplyRecommended}
+                className="mt-2 text-sm font-medium text-blue-700 hover:text-blue-800 underline"
+              >
+                {CROP_RECOMMENDATION_TEXT.applyRecommended}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Alerts enabled checkbox */}
       <div className="flex items-center gap-2">

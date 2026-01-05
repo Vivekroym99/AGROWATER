@@ -204,3 +204,192 @@ export const CHART_CONFIG = {
   optimalZoneColor: 'rgba(34, 197, 94, 0.1)',
   height: 300,
 } as const;
+
+// NDVI thresholds for vegetation health
+export const NDVI_THRESHOLDS = {
+  excellent: 0.6, // >= 0.6 is excellent
+  good: 0.4,      // 0.4-0.59 is good
+  moderate: 0.2,  // 0.2-0.39 is moderate
+  // < 0.2 is poor
+} as const;
+
+// NDVI status colors for UI
+export const NDVI_STATUS_COLORS = {
+  excellent: {
+    bg: 'bg-emerald-100',
+    text: 'text-emerald-800',
+    border: 'border-emerald-500',
+    fill: '#10b981',
+  },
+  good: {
+    bg: 'bg-green-100',
+    text: 'text-green-800',
+    border: 'border-green-500',
+    fill: '#22c55e',
+  },
+  moderate: {
+    bg: 'bg-yellow-100',
+    text: 'text-yellow-800',
+    border: 'border-yellow-500',
+    fill: '#eab308',
+  },
+  poor: {
+    bg: 'bg-red-100',
+    text: 'text-red-800',
+    border: 'border-red-500',
+    fill: '#ef4444',
+  },
+  unknown: {
+    bg: 'bg-gray-100',
+    text: 'text-gray-600',
+    border: 'border-gray-400',
+    fill: '#9ca3af',
+  },
+} as const;
+
+// NDVI Chart configuration
+export const NDVI_CHART_CONFIG = {
+  lineColor: '#10B981',
+  excellentColor: 'rgba(16, 185, 129, 0.15)',
+  goodColor: 'rgba(34, 197, 94, 0.1)',
+  moderateColor: 'rgba(234, 179, 8, 0.1)',
+  poorColor: 'rgba(239, 68, 68, 0.1)',
+  height: 300,
+} as const;
+
+// NDVI Polish UI text
+export const NDVI_TEXT = {
+  title: 'Indeks wegetacji NDVI',
+  history: 'Historia NDVI',
+  current: 'Aktualny NDVI',
+  noData: 'Brak danych NDVI',
+  statusExcellent: 'Doskonaly',
+  statusGood: 'Dobry',
+  statusModerate: 'Umiarkowany',
+  statusPoor: 'Slaby',
+  statusUnknown: 'Brak danych',
+  trend: 'Trend',
+  trendImproving: 'Poprawia sie',
+  trendDeclining: 'Pogarsza sie',
+  trendStable: 'Stabilny',
+  excellentDesc: 'Roslinnosc w doskonalym stanie',
+  goodDesc: 'Roslinnosc w dobrym stanie',
+  moderateDesc: 'Roslinnosc wymaga uwagi',
+  poorDesc: 'Roslinnosc w slabym stanie - mozliwy stres',
+  unknownDesc: 'Brak danych - poczekaj na synchronizacje z Agro API',
+  notSynced: 'Pole nie zsynchronizowane z Agro API',
+  syncRequired: 'Wymagana synchronizacja',
+  syncButton: 'Synchronizuj z Agro API',
+  syncPending: 'Synchronizacja w toku...',
+  syncError: 'Blad synchronizacji',
+} as const;
+
+// Agronomic data Polish UI text
+export const AGRONOMIC_TEXT = {
+  title: 'Dane agronomiczne',
+  gdd: 'Suma temperatur (GDD)',
+  gddUnit: 'stopniodni',
+  gddDesc: 'Stopniodni powyzej 10°C od poczatku sezonu',
+  precipitation: 'Suma opadow',
+  precipitationUnit: 'mm',
+  precipitationDesc: 'Laczne opady od poczatku sezonu',
+  soilMoisture: 'Wilgotnosc gleby (API)',
+  soilTemp: 'Temp. gleby (10cm)',
+  seasonStart: 'Poczatek sezonu',
+  notConfigured: 'Agro API nie skonfigurowane',
+  loading: 'Ladowanie danych agronomicznych...',
+} as const;
+
+// Crop-specific moisture thresholds based on agronomic requirements
+// Values represent the moisture level below which the crop may experience stress
+export const CROP_MOISTURE_THRESHOLDS: Record<string, { min: number; max: number; default: number; sensitivity: string }> = {
+  potatoes: { min: 0.45, max: 0.50, default: 0.47, sensitivity: 'very_high' },
+  sugar_beet: { min: 0.40, max: 0.45, default: 0.42, sensitivity: 'high' },
+  maize: { min: 0.40, max: 0.45, default: 0.42, sensitivity: 'high' },
+  wheat: { min: 0.35, max: 0.40, default: 0.37, sensitivity: 'medium' },
+  winter_wheat: { min: 0.35, max: 0.40, default: 0.37, sensitivity: 'medium' },
+  rapeseed: { min: 0.35, max: 0.40, default: 0.37, sensitivity: 'medium' },
+  oats: { min: 0.35, max: 0.40, default: 0.37, sensitivity: 'medium' },
+  barley: { min: 0.30, max: 0.35, default: 0.32, sensitivity: 'low' },
+  rye: { min: 0.30, max: 0.35, default: 0.32, sensitivity: 'low' },
+  other: { min: 0.30, max: 0.35, default: 0.32, sensitivity: 'default' },
+} as const;
+
+// Default threshold when no crop is selected
+export const DEFAULT_MOISTURE_THRESHOLD = 0.30;
+
+/**
+ * Get the recommended moisture threshold for a crop type
+ * @param cropType - The crop type key (e.g., 'potatoes', 'wheat')
+ * @returns The recommended threshold value (0-1)
+ */
+export function getRecommendedThreshold(cropType: string | null | undefined): number {
+  if (!cropType) return DEFAULT_MOISTURE_THRESHOLD;
+  return CROP_MOISTURE_THRESHOLDS[cropType]?.default ?? DEFAULT_MOISTURE_THRESHOLD;
+}
+
+/**
+ * Get the recommended threshold range text for a crop type
+ * @param cropType - The crop type key
+ * @returns Formatted range string (e.g., "45-50%") or null if no crop
+ */
+export function getThresholdRangeText(cropType: string | null | undefined): string | null {
+  if (!cropType) return null;
+  const thresholds = CROP_MOISTURE_THRESHOLDS[cropType];
+  if (!thresholds) return null;
+  return `${Math.round(thresholds.min * 100)}-${Math.round(thresholds.max * 100)}%`;
+}
+
+/**
+ * Get the crop label in Polish for a crop type
+ * @param cropType - The crop type key
+ * @returns Polish label or null
+ */
+export function getCropLabel(cropType: string | null | undefined): string | null {
+  if (!cropType) return null;
+  const crop = CROP_TYPES.find(c => c.value === cropType);
+  return crop?.label ?? null;
+}
+
+// Crop recommendation UI text
+export const CROP_RECOMMENDATION_TEXT = {
+  title: 'Zalecenia dla uprawy',
+  recommended: 'Zalecane dla',
+  range: 'Zalecany zakres',
+  applyRecommended: 'Zastosuj zalecany prog',
+  sensitivityLabel: 'Wrazliwosc na susza',
+  sensitivityVeryHigh: 'Bardzo wysoka',
+  sensitivityHigh: 'Wysoka',
+  sensitivityMedium: 'Srednia',
+  sensitivityLow: 'Niska',
+  sensitivityDefault: 'Standardowa',
+  infoText: 'Rozne uprawy maja rozne wymagania wodne. Ponizej znajdziesz zalecany prog alertu dla wybranej uprawy.',
+} as const;
+
+// Satellite imagery configuration
+export const SATELLITE_CONFIG = {
+  maxCloudCoverage: 30, // Max cloud coverage percentage to show
+  defaultPreset: 'ndvi' as const,
+  presets: ['truecolor', 'falsecolor', 'ndvi', 'evi'] as const,
+  maxZoomSentinel: 14,
+  maxZoomLandsat: 13,
+} as const;
+
+// Satellite imagery Polish UI text
+export const SATELLITE_TEXT = {
+  title: 'Zdjecia satelitarne',
+  selectDate: 'Wybierz date',
+  selectLayer: 'Wybierz warstwe',
+  layerOsm: 'Mapa',
+  layerTrueColor: 'Kolor naturalny',
+  layerFalseColor: 'Fałszywy kolor',
+  layerNdvi: 'NDVI',
+  layerEvi: 'EVI',
+  source: 'Zrodlo',
+  cloudCoverage: 'Zachmurzenie',
+  noImages: 'Brak dostepnych zdjec satelitarnych',
+  notSynced: 'Synchronizacja z Agro API wymagana',
+  syncFirst: 'Zsynchronizuj pole z Agro API, aby zobaczyc zdjecia satelitarne',
+  loading: 'Ladowanie zdjec...',
+  imageDate: 'Data zdjecia',
+} as const;
