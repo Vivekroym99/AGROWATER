@@ -236,5 +236,28 @@
   "language": {
     "title": "Język",
     "select": "Wybierz język"
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "profile": "Profil",
+    "notifications": "Powiadomienia",
+    "notificationsInfo": "Ustawienia alertów są konfigurowane dla każdego pola osobno.",
+    "notificationsHint": "Przejdź do szczegółów pola, aby włączyć/wyłączyć powiadomienia i ustawić próg alertu.",
+    "changePassword": "Zmiana hasła",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Powtórz nowe hasło",
+    "passwordChanged": "Hasło zostało zmienione",
+    "passwordChangeError": "Nie udało się zmienić hasła",
+    "passwordMismatch": "Hasła muszą być identyczne",
+    "changePasswordBtn": "Zmień hasło",
+    "deleteAccount": "Usuń konto",
+    "deleteAccountWarning": "Po usunięciu konta wszystkie Twoje dane (pola, odczyty, alerty) zostaną trwale usunięte. Tej operacji nie można cofnąć.",
+    "deleteMyAccount": "Usuń moje konto",
+    "deleteConfirmTitle": "Czy na pewno chcesz usunąć konto?",
+    "deleteConfirmWarning": "Ta operacja jest nieodwracalna. Wszystkie Twoje dane zostaną trwale usunięte.",
+    "deleteConfirmLabel": "Wpisz USUŃ KONTO aby potwierdzić:",
+    "deleteConfirmPlaceholder": "USUŃ KONTO",
+    "deleteConfirmText": "USUŃ KONTO",
+    "deleteError": "Nie udało się usunąć konta"
   }
 }

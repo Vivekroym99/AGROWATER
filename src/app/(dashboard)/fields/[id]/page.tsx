@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
-import { pl } from 'date-fns/locale';
+import { pl, enUS } from 'date-fns/locale';
+import { useTranslations } from 'next-intl';
+import { useLocale } from '@/i18n';
 import { useField, useFields } from '@/hooks/useFields';
 import { useMoistureHistory } from '@/hooks/useMoistureHistory';
 import { MoistureChart, formatChartData, TimeRangeSelector, MoistureAnalysis } from '@/components/charts';
@@ -15,13 +17,17 @@ import { Spinner } from '@/components/ui/Spinner';
 import { ExportMenu } from '@/components/export';
 import { WeatherWidget } from '@/components/weather';
 import { IrrigationPlanner } from '@/components/irrigation';
-import { UI_TEXT, STATUS_COLORS, CROP_TYPES } from '@/lib/constants';
+import { STATUS_COLORS } from '@/lib/constants';
 import { cn } from '@/lib/utils/cn';
+
+const dateLocales = { pl, en: enUS };
 
 export default function FieldDetailPage() {
   const params = useParams();
   const router = useRouter();
   const fieldId = params.id as string;
+  const locale = useLocale();
+  const t = useTranslations();
 
   const { field, loading: fieldLoading, error: fieldError, refetch } = useField(fieldId);
   const { deleteField, updateField } = useFields();
@@ -36,6 +42,8 @@ export default function FieldDetailPage() {
     alert_threshold: field?.alert_threshold ?? 0.3,
   });
   const [savingAlerts, setSavingAlerts] = useState(false);
+
+  const dateLocale = dateLocales[locale as keyof typeof dateLocales] || enUS;
 
   // Handle delete
   const handleDelete = async () => {
@@ -91,17 +99,17 @@ export default function FieldDetailPage() {
     return (
       <div className="max-w-4xl mx-auto py-8 px-4">
         <div className="bg-red-50 text-red-700 p-4 rounded-lg">
-          {fieldError || UI_TEXT.errors.notFound}
+          {fieldError || t('errors.notFound')}
         </div>
         <Link href="/fields" className="text-green-600 hover:underline mt-4 inline-block">
-          {UI_TEXT.fields.back}
+          {t('fields.back')}
         </Link>
       </div>
     );
   }
 
   const statusColors = STATUS_COLORS[field.status];
-  const cropLabel = CROP_TYPES.find((c) => c.value === field.crop_type)?.label || field.crop_type;
+  const cropLabel = field.crop_type ? t(`crops.${field.crop_type}`) : null;
   const chartData = formatChartData(
     readings.map((r) => ({
       observation_date: r.observation_date,
@@ -118,17 +126,17 @@ export default function FieldDetailPage() {
             href="/fields"
             className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mb-2 inline-block"
           >
-            &larr; {UI_TEXT.fields.back}
+            &larr; {t('fields.back')}
           </Link>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{field.name}</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             {cropLabel && <span>{cropLabel} &bull; </span>}
-            {field.area_hectares?.toFixed(2)} {UI_TEXT.common.hectares}
+            {field.area_hectares?.toFixed(2)} {t('common.hectares')}
             {field.last_reading_date && (
               <span>
                 {' '}
-                &bull; {UI_TEXT.moisture.lastUpdate}:{' '}
-                {format(parseISO(field.last_reading_date), 'd MMM yyyy', { locale: pl })}
+                &bull; {t('moisture.lastUpdate')}:{' '}
+                {format(parseISO(field.last_reading_date), 'd MMM yyyy', { locale: dateLocale })}
               </span>
             )}
           </p>
@@ -146,14 +154,14 @@ export default function FieldDetailPage() {
             onClick={handleFetchMoisture}
             disabled={fetchingMoisture}
           >
-            {fetchingMoisture ? <Spinner size="sm" /> : 'Odswież dane'}
+            {fetchingMoisture ? <Spinner size="sm" /> : t('moisture.refresh')}
           </Button>
           <Button
             variant="danger"
             size="sm"
             onClick={() => setShowDeleteConfirm(true)}
           >
-            {UI_TEXT.fields.delete}
+            {t('fields.delete')}
           </Button>
         </div>
       </div>
@@ -164,11 +172,11 @@ export default function FieldDetailPage() {
         <div className={cn('rounded-lg p-6', statusColors.bg)}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{UI_TEXT.moisture.current}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{t('moisture.current')}</p>
               <p className={cn('text-4xl font-bold mt-1', statusColors.text)}>
                 {field.current_moisture !== null
                   ? `${Math.round(field.current_moisture * 100)}%`
-                  : UI_TEXT.moisture.noData}
+                  : t('moisture.noData')}
               </p>
             </div>
             <div
@@ -180,11 +188,11 @@ export default function FieldDetailPage() {
                 statusColors.border
               )}
             >
-              {UI_TEXT.status[field.status]}
+              {t(`status.${field.status}`)}
             </div>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
-            {UI_TEXT.status[`${field.status}Desc` as keyof typeof UI_TEXT.status]}
+            {t(`status.${field.status}Desc`)}
           </p>
         </div>
 
@@ -195,7 +203,7 @@ export default function FieldDetailPage() {
       {/* Moisture Chart */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{UI_TEXT.moisture.history}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('moisture.history')}</h2>
           <TimeRangeSelector
             value={timeRange}
             onChange={setTimeRange}
@@ -222,7 +230,7 @@ export default function FieldDetailPage() {
 
       {/* Alert Settings */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{UI_TEXT.alerts.settings}</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{t('alerts.settings')}</h2>
 
         <div className="space-y-4">
           {/* Enable alerts toggle */}
@@ -235,13 +243,13 @@ export default function FieldDetailPage() {
               }
               className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-green-600 focus:ring-green-500 dark:bg-gray-700"
             />
-            <span className="text-gray-700 dark:text-gray-300">{UI_TEXT.alerts.enable}</span>
+            <span className="text-gray-700 dark:text-gray-300">{t('alerts.enable')}</span>
           </label>
 
           {/* Threshold slider */}
           <div className="space-y-2">
             <label className="block text-sm text-gray-600 dark:text-gray-400">
-              {UI_TEXT.alerts.thresholdDesc}{' '}
+              {t('alerts.thresholdDesc')}{' '}
               <span className="font-semibold text-gray-900 dark:text-white">
                 {Math.round(alertSettings.alert_threshold * 100)}%
               </span>
@@ -271,7 +279,7 @@ export default function FieldDetailPage() {
             disabled={savingAlerts}
             size="sm"
           >
-            {savingAlerts ? <Spinner size="sm" /> : UI_TEXT.common.save}
+            {savingAlerts ? <Spinner size="sm" /> : t('common.save')}
           </Button>
         </div>
       </div>
@@ -281,24 +289,24 @@ export default function FieldDetailPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {UI_TEXT.fields.confirmDelete}
+              {t('fields.confirmDelete')}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Pole &quot;{field.name}&quot; zostanie usunięte wraz ze wszystkimi danymi.
+              &quot;{field.name}&quot; {t('fields.deleteWarning')}
             </p>
             <div className="flex gap-3 justify-end">
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteConfirm(false)}
               >
-                {UI_TEXT.common.cancel}
+                {t('common.cancel')}
               </Button>
               <Button
                 variant="danger"
                 onClick={handleDelete}
                 disabled={deleting}
               >
-                {deleting ? <Spinner size="sm" /> : UI_TEXT.common.delete}
+                {deleting ? <Spinner size="sm" /> : t('common.delete')}
               </Button>
             </div>
           </div>

@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
-import { pl } from 'date-fns/locale';
+import { pl, enUS } from 'date-fns/locale';
+import { useTranslations } from 'next-intl';
+import { useLocale } from '@/i18n';
 import { cn } from '@/lib/utils/cn';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -21,6 +23,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+
+const dateLocales = { pl, en: enUS };
 
 interface IrrigationPlannerProps {
   fieldId: string;
@@ -50,13 +54,63 @@ const urgencyColors = {
   critical: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 };
 
-const urgencyLabels = {
-  none: 'Brak potrzeby',
-  low: 'Niska',
-  medium: 'Umiarkowana',
-  high: 'Wysoka',
-  critical: 'Krytyczna',
-};
+// Loading skeleton component
+function IrrigationSkeleton({ className }: { className?: string }) {
+  return (
+    <Card className={cn('overflow-hidden', className)}>
+      {/* Header skeleton */}
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-5 w-5 bg-gray-300 dark:bg-gray-600 rounded animate-pulse" />
+            <div className="h-5 w-40 bg-gray-300 dark:bg-gray-600 rounded animate-pulse" />
+          </div>
+          <div className="h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        </div>
+      </div>
+
+      {/* Recommendation skeleton */}
+      <div className="px-6 py-4">
+        <div className="flex items-start gap-4">
+          <div className="h-12 w-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-20 bg-gray-300 dark:bg-gray-600 rounded animate-pulse" />
+              <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            </div>
+            <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          </div>
+        </div>
+      </div>
+
+      {/* Schedule skeleton */}
+      <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="h-4 w-32 bg-gray-300 dark:bg-gray-600 rounded mb-3 animate-pulse" />
+        <div className="grid grid-cols-7 gap-2">
+          {[...Array(7)].map((_, i) => (
+            <div key={i} className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800 space-y-2">
+              <div className="h-3 w-8 bg-gray-300 dark:bg-gray-600 rounded mx-auto animate-pulse" />
+              <div className="h-5 w-6 bg-gray-300 dark:bg-gray-600 rounded mx-auto animate-pulse" />
+              <div className="h-8 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Stats skeleton */}
+      <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="h-4 w-24 bg-gray-300 dark:bg-gray-600 rounded animate-pulse" />
+            <div className="h-4 w-24 bg-gray-300 dark:bg-gray-600 rounded animate-pulse" />
+          </div>
+          <div className="h-4 w-16 bg-gray-300 dark:bg-gray-600 rounded animate-pulse" />
+        </div>
+      </div>
+    </Card>
+  );
+}
 
 export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps) {
   const [data, setData] = useState<IrrigationData | null>(null);
@@ -65,6 +119,10 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
   const [showHistory, setShowHistory] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const t = useTranslations('irrigation');
+  const tCommon = useTranslations('common');
+  const locale = useLocale();
+  const dateLocale = dateLocales[locale as keyof typeof dateLocales] || enUS;
 
   // Form state for logging irrigation
   const [formData, setFormData] = useState({
@@ -140,13 +198,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
   };
 
   if (loading) {
-    return (
-      <Card className={cn('p-6', className)}>
-        <div className="flex items-center justify-center h-48">
-          <Spinner size="lg" />
-        </div>
-      </Card>
-    );
+    return <IrrigationSkeleton className={className} />;
   }
 
   if (error) {
@@ -159,7 +211,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
             onClick={fetchData}
             className="mt-3 text-sm text-blue-600 dark:text-blue-400 hover:underline"
           >
-            Spróbuj ponownie
+            {tCommon('tryAgain')}
           </button>
         </div>
       </Card>
@@ -178,7 +230,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
           <div className="flex items-center gap-2">
             <Droplets className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              Planowanie nawadniania
+              {t('title')}
             </h3>
           </div>
           <Button
@@ -187,7 +239,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
             onClick={() => setShowLogForm(!showLogForm)}
           >
             <Plus className="h-4 w-4 mr-1" />
-            Dodaj nawodnienie
+            {t('addEvent')}
           </Button>
         </div>
       </div>
@@ -201,7 +253,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Data
+                {t('date')}
               </label>
               <input
                 type="date"
@@ -215,7 +267,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Ilość wody (mm)
+                {t('waterAmount')} (mm)
               </label>
               <input
                 type="number"
@@ -232,7 +284,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Czas trwania (min)
+                {t('duration')} (min)
               </label>
               <input
                 type="number"
@@ -246,7 +298,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Metoda
+                {t('method')}
               </label>
               <select
                 value={formData.method}
@@ -255,17 +307,17 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
                 }
                 className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
-                <option value="manual">Ręczne</option>
-                <option value="sprinkler">Zraszacze</option>
-                <option value="drip">Kroplowe</option>
-                <option value="flood">Zalewowe</option>
-                <option value="other">Inne</option>
+                <option value="manual">{t('methods.manual')}</option>
+                <option value="sprinkler">{t('methods.sprinkler')}</option>
+                <option value="drip">{t('methods.drip')}</option>
+                <option value="flood">{t('methods.flood')}</option>
+                <option value="other">{t('methods.other')}</option>
               </select>
             </div>
           </div>
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Notatki
+              {t('notes')}
             </label>
             <input
               type="text"
@@ -273,13 +325,12 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, notes: e.target.value }))
               }
-              placeholder="Opcjonalne notatki..."
               className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
           <div className="flex gap-2 mt-4">
             <Button type="submit" size="sm" disabled={submitting}>
-              {submitting ? <Spinner size="sm" /> : 'Zapisz'}
+              {submitting ? <Spinner size="sm" /> : t('save')}
             </Button>
             <Button
               type="button"
@@ -287,7 +338,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
               size="sm"
               onClick={() => setShowLogForm(false)}
             >
-              Anuluj
+              {t('cancel')}
             </Button>
           </div>
         </form>
@@ -322,11 +373,11 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
                   urgencyColors[recommendation.urgency]
                 )}
               >
-                {urgencyLabels[recommendation.urgency]}
+                {t(`urgency.${recommendation.urgency}`)}
               </span>
               {recommendation.nextIrrigationDate && (
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Następne: {format(recommendation.nextIrrigationDate, 'd MMM', { locale: pl })}
+                  {format(recommendation.nextIrrigationDate, 'd MMM', { locale: dateLocale })}
                 </span>
               )}
             </div>
@@ -335,12 +386,6 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
               <div className="mt-2 flex flex-wrap gap-4 text-sm">
                 <span className="text-gray-600 dark:text-gray-400">
                   <strong>{recommendation.waterAmount} mm</strong> ({formatWaterVolume(recommendation.waterVolume)})
-                </span>
-                <span className="text-gray-600 dark:text-gray-400">
-                  Deficyt: <strong>{Math.round(recommendation.factors.deficit * 100)}%</strong>
-                </span>
-                <span className="text-gray-600 dark:text-gray-400">
-                  Dzienna potrzeba: <strong>{recommendation.factors.dailyNeed} mm/dzien</strong>
                 </span>
               </div>
             )}
@@ -352,7 +397,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
       <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
         <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
           <Calendar className="h-4 w-4" />
-          Harmonogram 7 dni
+          {t('schedule')}
         </h4>
         <div className="grid grid-cols-7 gap-2">
           {suggestedSchedule.map((day, index) => (
@@ -366,10 +411,10 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
               )}
             >
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {format(day.date, 'EEE', { locale: pl })}
+                {format(day.date, 'EEE', { locale: dateLocale })}
               </p>
               <p className="font-medium text-gray-900 dark:text-white">
-                {format(day.date, 'd', { locale: pl })}
+                {format(day.date, 'd', { locale: dateLocale })}
               </p>
               {day.recommended ? (
                 <div className="mt-1">
@@ -395,13 +440,13 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6 text-sm">
             <div>
-              <span className="text-gray-500 dark:text-gray-400">Ten rok: </span>
+              <span className="text-gray-500 dark:text-gray-400">{t('thisYear')}: </span>
               <span className="font-medium text-gray-900 dark:text-white">
                 {stats.totalWaterThisYear} mm
               </span>
             </div>
             <div>
-              <span className="text-gray-500 dark:text-gray-400">Nawodnien: </span>
+              <span className="text-gray-500 dark:text-gray-400">{t('irrigationCount')}: </span>
               <span className="font-medium text-gray-900 dark:text-white">
                 {stats.irrigationCountThisYear}
               </span>
@@ -412,7 +457,7 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
             className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline"
           >
             <History className="h-4 w-4" />
-            Historia
+            {t('history')}
             {showHistory ? (
               <ChevronUp className="h-4 w-4" />
             ) : (
@@ -426,11 +471,11 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
       {showHistory && (
         <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
           <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Ostatnie nawodnienia
+            {t('history')}
           </h4>
           {history.length === 0 ? (
             <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-              Brak zapisanych nawodnień
+              {t('noHistory')}
             </p>
           ) : (
             <div className="space-y-2">
@@ -442,16 +487,10 @@ export function IrrigationPlanner({ fieldId, className }: IrrigationPlannerProps
                   <div className="flex items-center gap-3">
                     <div className="text-sm">
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {format(parseISO(event.irrigation_date), 'd MMMM yyyy', { locale: pl })}
+                        {format(parseISO(event.irrigation_date), 'd MMMM yyyy', { locale: dateLocale })}
                       </p>
                       <p className="text-gray-500 dark:text-gray-400">
-                        {event.method === 'manual'
-                          ? 'Ręczne'
-                          : event.method === 'sprinkler'
-                          ? 'Zraszacze'
-                          : event.method === 'drip'
-                          ? 'Kroplowe'
-                          : event.method}
+                        {t(`methods.${event.method}`)}
                         {event.duration_minutes && ` • ${event.duration_minutes} min`}
                       </p>
                     </div>

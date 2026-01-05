@@ -236,5 +236,28 @@
   "language": {
     "title": "Language",
     "select": "Select language"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "notificationsInfo": "Alert settings are configured for each field separately.",
+    "notificationsHint": "Go to field details to enable/disable notifications and set alert threshold.",
+    "changePassword": "Change Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "passwordChanged": "Password has been changed",
+    "passwordChangeError": "Failed to change password",
+    "passwordMismatch": "Passwords must match",
+    "changePasswordBtn": "Change Password",
+    "deleteAccount": "Delete Account",
+    "deleteAccountWarning": "After deleting your account, all your data (fields, readings, alerts) will be permanently deleted. This action cannot be undone.",
+    "deleteMyAccount": "Delete My Account",
+    "deleteConfirmTitle": "Are you sure you want to delete your account?",
+    "deleteConfirmWarning": "This action is irreversible. All your data will be permanently deleted.",
+    "deleteConfirmLabel": "Type DELETE ACCOUNT to confirm:",
+    "deleteConfirmPlaceholder": "DELETE ACCOUNT",
+    "deleteConfirmText": "DELETE ACCOUNT",
+    "deleteError": "Failed to delete account"
   }
 }
